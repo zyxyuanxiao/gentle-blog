@@ -11,7 +11,11 @@ class StromInfo(models.Model):
     phone = models.CharField(max_length=18, verbose_name=u"电话", null=False, blank=False, default=u'暂无')
     email = models.EmailField(verbose_name=u"邮箱", default='xxx@qq.com', null=False, blank=False)
     wx = models.ImageField(upload_to='coreuser/image', verbose_name=u"微信", max_length=100,
-                              default='article/default/default.jpg', null=True, blank=True)
+                              default='coreuser/default/wx.jpg', null=True, blank=True)
+    wxpay = models.ImageField(upload_to='coreuser/image', verbose_name=u"微信收款", max_length=100,
+                              default='coreuser/default/wxzf.png', null=True, blank=True)
+    zfbpay = models.ImageField(upload_to='coreuser/image', verbose_name=u"微信收款", max_length=100,
+                              default='coreuser/default/zfbzf.jpg', null=True, blank=True)
 
     class Meta:
         verbose_name = u"站主信息"

@@ -9,25 +9,25 @@ import json
 
 class IndexView(View):
     def get(self, request, title):
-        # try:
-        base = models.BlogBaseSet.objects.all()[0]
-        user = models.StromInfo.objects.all()[0]
-        article = models.ArticlesMake.objects.order_by('-article_make_time')
-        banner = models.ArticlesMake.objects.filter(is_banner=True).order_by('-like_num', '-read_num')[:3]
-        recommend = models.ArticlesMake.objects.filter(is_recommend=True).order_by('-like_num', '-read_num')[:6]
-        read = models.ArticlesMake.objects.order_by('-read_num')[:6]
-        link = models.FriendshipLink.objects.all()[:3]
-        nav = models.BlogNavSet.objects.all()
-        title = title
         try:
-            page = request.GET.get('page', 1)
-        except PageNotAnInteger:
-            page = 1
-        pure = Paginator(article, 10, request=request)
-        new = pure.page(page)
-        return render(request, 'index.html', locals())
-        # except:
-        #     return redirect('/xadmin/')
+            base = models.BlogBaseSet.objects.all()[0]
+            user = models.StromInfo.objects.all()[0]
+            article = models.ArticlesMake.objects.order_by('-article_make_time')
+            banner = models.ArticlesMake.objects.filter(is_banner=True).order_by('-like_num', '-read_num')[:3]
+            recommend = models.ArticlesMake.objects.filter(is_recommend=True).order_by('-like_num', '-read_num')[:6]
+            read = models.ArticlesMake.objects.order_by('-read_num')[:6]
+            link = models.FriendshipLink.objects.all()[:3]
+            nav = models.BlogNavSet.objects.all()
+            title = title
+            try:
+                page = request.GET.get('page', 1)
+            except PageNotAnInteger:
+                page = 1
+            pure = Paginator(article, 10, request=request)
+            new = pure.page(page)
+            return render(request, 'index.html', locals())
+        except:
+            return redirect('/xadmin/')
 
 
 class ArticleView(View):
