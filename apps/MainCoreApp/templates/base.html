@@ -1,0 +1,62 @@
+{% load static %}
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{% static 'css/base.css' %}" rel="stylesheet">
+    <link href="{% static 'css/index.css' %}" rel="stylesheet">
+    <link href="{% static 'css/m.css' %}" rel="stylesheet">
+    <!--[if lt IE 9]>
+    <script src="{% static 'js/modernizr.js' %}"></script>
+    <![endif]-->
+    <script src="{% static 'js/jquery-2.1.1.min.js' %}"></script>
+</head>
+
+<body>
+    <header>
+        <div id="mnav">
+            <div class="logo"><a href="/">{{ base.blog_name }}</a></div>
+            <h2 id="mnavh"><span class="navicon"></span></h2>
+            <ul id="starlist">
+                {% for item in nav %}
+                <li><a href=" {% if item.nav_articles_type %} {% url 'Articles:list' item.nav_articles_type.type_name|urlencode %} {% else %} {{ item.nav_url }} {% endif %}">{{ item.nav_name }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+        <script>
+        window.onload = function() {
+            var oH2 = document.getElementById("mnavh");
+            var oUl = document.getElementById("starlist");
+            oH2.onclick = function() {
+                var style = oUl.style;
+                style.display = style.display == "block" ? "none" : "block";
+                oH2.className = style.display == "block" ? "open" : ""
+            }
+        }
+        </script>
+    </header>
+    <div class="line46"></div>
+    <div class="blank"></div>
+    <article>
+        {% block extra_head %}
+        {% endblock %}
+        <div class="leftbox">
+            {% block leftbox %}
+            {% endblock %}
+        </div>
+        <div class="rightbox">
+            {% block rightbox %}
+            {% endblock %}
+        </div>
+    </article>
+    <footer>
+        <p>{{ base.blog_foot_content }}</p>
+    </footer>
+</body>
+
+</html>

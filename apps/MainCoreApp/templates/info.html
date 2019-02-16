@@ -1,0 +1,203 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block leftbox %}
+<div class="infos">
+    <div class="newsview">
+        <h2 class="intitle">您现在的位置是：<a href="/">网站首页</a>&nbsp;&gt;&nbsp;<a href="{% url 'Articles:list' typeof %}">{{ typeof }}</a>&nbsp;&gt;&nbsp;<a href="{% url 'Articles:article' article.article_type.type_name|urlencode article.title|urlencode %}">{{ article.title }}</a></h2>
+        <h3 class="news_title">{{ article.title }}</h3>
+        <div class="news_author"><span class="au01">{{ article.article_author.name }}</span><span class="au02">{{ article.article_brief_time }}</span><span class="au03">共<b>{{ article.read_num }}</b>人围观</span></div>
+        <div class="tags">{% if article.article_tags %} {% for item in article.article_tags.all %} <a href="{% url 'Articles:list' item.tag_name|urlencode %}">{{ item.tag_name }}</a> {% endfor %} {% endif %}</div>
+        {% if article.introduction %}
+        <div class="news_about">
+            <strong>简介</strong>
+            {{ article.introduction }}
+        </div>
+        {% endif %}
+        <div class="news_infos">
+            {% autoescape off %}
+            {{ article.content }}
+            {% endautoescape %}
+        </div>
+    </div>
+    <div class="share">
+        <p class="diggit"><a href="javascript:;" onclick="LikeThisArticle()"> 很赞哦！ </a>(<b id="diggnum">{{ article.like_num }}</b>)</p>
+        {# 这里要写 ajax #}
+        <p class="dasbox"><a href="javascript:void(0)" onclick="dashangToggle()" class="dashang" title="打赏，支持一下">打赏本站</a></p>
+        <div class="hide_box" style="display: none;"></div>
+        <div class="shang_box" style="display: none;"> <a class="shang_close" href="javascript:void(0)" onclick="dashangToggle()" title="关闭">关闭</a>
+            <div class="shang_tit">
+                <p>感谢您的支持，我会继续努力的!</p>
+            </div>
+            <div class="shang_payimg"> <img src="{% static 'images/alipayimg.jpg' %}" alt="扫码支持" title="扫一扫"> </div>
+                <div class="pay_explain">扫码打赏，你说多少就多少</div>
+                <div class="shang_payselect">
+                    <div class="pay_item checked" data-id="alipay"> <span class="radiobox"></span> <span class="pay_logo"><img src="{% static 'images/alipay.jpg' %}" alt="支付宝"></span> </div>
+                    <div class="pay_item" data-id="weipay"> <span class="radiobox"></span> <span class="pay_logo"><img src="{% static 'images/wechat.jpg' %}" alt="微信"></span> </div>
+                </div>
+                <script type="text/javascript">
+                $(function() {
+                    $(".pay_item").click(function() {
+                        $(this).addClass('checked').siblings('.pay_item').removeClass('checked');
+                        var dataid = $(this).attr('data-id');
+                        $(".shang_payimg img").attr("src", "/static/images/" + dataid + "img.jpg");
+                        $("#shang_pay_txt").text(dataid == "alipay" ? "支付宝" : "微信");
+                    });
+                });
+
+                function dashangToggle() {
+                    $(".hide_box").fadeToggle();
+                    $(".shang_box").fadeToggle();
+                }
+                </script>
+            </div>
+        </div>
+        <!--share end-->
+        <div class="zsm">
+            <p>打赏本站，你说多少就多少</p><img src="{% static 'images/zsm.jpg' %}"></div>
+        </div>
+        <div class="nextinfo">
+            <p>上一篇：
+                {% if up_page %}
+                <a href="{% url 'Articles:article' up_page.article_type.type_name|urlencode up_page.title|urlencode %}" >{{ up_page.title }}</a>
+                {% else %}
+                <a href="">无</a>
+                {% endif %}
+            </p>
+            <p>下一篇：
+                {% if down_page %}
+                <a href="{% url 'Articles:article' down_page.article_type.type_name|urlencode down_page.title|urlencode %}" >{{ down_page.title }}</a>
+                {% else %}
+                <a href="">无</a>
+                {% endif %}
+            </p>
+        </div>
+        <div class="otherlink">
+            <h2>相关文章</h2>
+            <ul>
+                {% for item in related_article %}
+                <li><a href="{% url 'Articles:article' item.article_type.type_name|urlencode item.title|urlencode %}" title="云南之行――丽江古镇玉龙雪山">{{ item.title }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="news_pl">
+            <h2>文章评论</h2>
+            <ul>
+                <div class="gbko">
+                    <form action="" method="post" name="saypl" id="saypl" onsubmit="return false;">
+                        {% csrf_token %}
+                        <div id="plpost">
+                            <p class="saying"><span>共有 {{ comment_all.count|default:0|default_if_none:0 }} 条评论</span>来说两句吧...</p>
+                            <p class="yname"><span>名字:</span>{{ comment.com_username }}</p>
+                            <p class="yzm"><span>验证码:</span>{{ comment.captcha }}</p>
+                            <span>评论内容:</span>
+                            <br>
+                            {{ comment.com_content }}
+                            <input name="imageField" type="submit" value="提交">
+                            <input type="hidden" value="{{ article.id }}" name="pid">
+                        </div>
+                    </form>
+                    <div class="fb">
+                        <ul id="comment_list">
+                            {% if comment_all %}
+                            {% for item in comment_all %}
+                            <li>
+                                <p class="fbtime"><span>{{ item.com_make_time }}</span>{{ item.com_username }}</p>
+                                <p class="fbinfo">{{ item.com_content }}</p>
+                            </li>
+                            {% endfor %}
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </ul>
+        </div>
+        {% endblock %}
+        {% block rightbox %}
+        <div class="search">
+            <form action="" method="post" name="searchform" id="searchform" onsubmit="return false;">
+                <input name="keyboard" id="keyboard" class="input_text" value="请输入关键字" style="color: rgb(153, 153, 153);" onfocus="if(value=='请输入关键字'){this.style.color='#000';value=''}" onblur="if(value==''){this.style.color='#999';value='请输入关键字'}" type="text">
+                <input name="Submit" class="input_submit" value="搜索" type="submit" onclick="Search()">
+            </form>
+        </div>
+        <div class="paihang">
+            <h2 class="ab_title"><a href="/">本栏推荐</a></h2>
+            <ul>
+                {% for item in recommend %}
+                {% if item.is_recommend %}
+                <li><b><a href="{% url 'Articles:article' item.article_type.type_name|urlencode item.title|urlencode %}" target="_blank">{{ item.title }}</a></b>
+                    <p>{% if item.introduction %} {{ item.introduction|truncatewords:45|truncatechars:45 }} {% else %} {% autoescape off %} {{ item.content|striptags|truncatewords:45|truncatechars:45 }} {% endautoescape %} {% endif %}</p>
+                </li>
+                {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="paihang">
+            <h2 class="ab_title"><a href="/">点击排行</a></h2>
+            <ul>
+                {% for item in read %}
+                <li><b><a href="{% url 'Articles:article' item.article_type.type_name|urlencode item.title|urlencode %}" target="_blank">{{ item.title }}</a></b>
+                    <p><i><img src="{{ MEDIA_URL }}{{ item.cover }}"></i> <a href="{% url 'Articles:article' item.article_type.type_name|urlencode item.title|urlencode %}">{% if item.introduction %} {{ item.introduction|truncatewords:45|truncatechars:45 }} {% else %} {% autoescape off %} {{ item.content|striptags|truncatewords:45|truncatechars:45 }} {% endautoescape %} {% endif %}</a></p>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="weixin">
+            <h2 class="ab_title">微信关注</h2>
+            <ul>
+                <img src="{{ MEDIA_URL }}{{ user.wx }}">
+                </ul>
+        </div>
+        <script>
+        function Search() {
+            window.location.href = encodeURI("/list/" + document.getElementById('keyboard').value + "/");
+        }
+        $('#saypl').submit(function() {
+            let form = new FormData(this);
+            $.ajax({
+                type: 'post',
+                data: form,
+                processData: false,
+                contentType: false,
+                url: '{% url "Articles:Comment" %}',
+                success: function(data) {
+                    try {
+                        if (data) {
+                            insert_cotent = '';
+                            for (var i in data) {
+                                current_data = data[i];
+                                insert_cotent += '<li> <p class="fbtime"><span>' + current_data['com_make_time'] + '</span>' + current_data['com_username'] + '</p> <p class="fbinfo">' + current_data['com_content'] + '</p> </li>';
+                            }
+                            if (insert_cotent) {
+                                $('#comment_list').html(insert_cotent);
+                            }
+                        }
+                        alert('评论成功');
+                    } catch (e) {
+                        alert(e);
+                    }
+                },
+                error: function(data) {
+                    data = JSON.parse(data.responseText);
+                    error_message = '';
+                    for (var a in data) {
+                        error_message += data[a];
+                    }
+                    alert(error_message);
+                }
+            });
+        });
+        $('.captcha').click(function() {
+            $.getJSON("/captcha/refresh/",
+                function(result) {
+                    $('.captcha').attr('src', result['image_url']);
+                    $('#id_captcha_0').val(result['key'])
+                });
+        });
+        function LikeThisArticle(){
+            $.get({% url 'Articles:ThumbUp' %}, {'id': {{ article.id }}}, function(data){
+                alert(data['mg']);
+                $('#diggnum').html(data['tp']);
+            });
+        }
+        </script>
+        {% endblock %}

@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load static %}
+        {% block leftbox %}
+            <div class="infos">
+                <div class="newsview">
+                    <h2 class="intitle">您现在的位置是：<a href='/'>首页</a>&nbsp;>&nbsp;留言</h2>
+                    <div class="gbook">
+                        <div id="comment_commons">
+                            {% for item in comments %}
+                            <div class="fb">
+                                <ul>
+                                    <span class="tximg"><img src="{{ MEDIA_URL }}{{ item.photo }}"></span>
+                                    <p class="fbtime"><span>2019-02-15</span>{{ item.name }}</p>
+                                    <p class="fbinfo">{{ item.content }}</p>
+                                </ul>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="gbox">
+                            <form action="" method="post" name="form1" id="form1" onsubmit="return false">
+                                {% csrf_token %}
+                                <p> <strong>来说点儿什么吧...</strong></p>
+                                <p><span> 您的姓名:</span>
+                                    <input name="name" type="text" id="name" />
+                                    *</p>
+                                <input name="email" type="hidden" id="email" value="admin@qq.com" />
+                                <p><span>选择头像:</span> *</p>
+                                <p> <i>
+                                  <input type="radio" value= "{{ MEDIA_URL }}coreuser/images/tx1.jpg" id= "1" name="photo" style="display:none">
+                                  <img id="a" src="{{ MEDIA_URL }}coreuser/default/tx1.jpg " onclick="myFun(this.id)"></i> <i>
+                                  <input type="radio" value= "{{ MEDIA_URL }}coreuser/default/tx2.jpg" id= "2" name="photo" style="display:none">
+                                  <img id="b" src="{{ MEDIA_URL }}coreuser/default/tx2.jpg" onclick="myFun(this.id)"></i> <i>
+                                  <input type="radio" value= "{{ MEDIA_URL }}coreuser/default/tx3.jpg" id= "3" name="photo" style="display:none">
+                                  <img id="c" src="{{ MEDIA_URL }}coreuser/default/tx3.jpg" onclick="myFun(this.id)"></i> <i>
+                                  <input type="radio" value= "{{ MEDIA_URL }}coreuser/default/tx4.jpg" id= "4" name="photo" style="display:none">
+                                  <img id="d" src="{{ MEDIA_URL }}coreuser/default/tx4.jpg " onclick="myFun(this.id)"></i> <i>
+                                  <input type="radio" value= "{{ MEDIA_URL }}coreuser/default/tx5.jpg" id= "5" name="photo" style="display:none">
+                                  <img id="e" src="{{ MEDIA_URL }}coreuser/default/tx5.jpg" onclick="myFun(this.id)"></i> <i>
+                                  <input type="radio" value= "{{ MEDIA_URL }}coreuser/default/tx6.jpg" id= "6" name="photo" style="display:none">
+                                  <img id="f" src="{{ MEDIA_URL }}coreuser/default/tx6.jpg" onclick="myFun(this.id)"></i> <i>
+                                  <input type="radio" value= "{{ MEDIA_URL }}coreuser/default/tx7.jpg" id= "7" name="photo" style="display:none">
+                                  <img id="g" src="{{ MEDIA_URL }}coreuser/default/tx7.jpg" onclick="myFun(this.id)"></i> <i>
+                                  <input type="radio" value= "{{ MEDIA_URL }}coreuser/default/tx8.jpg" id= "8" name="photo" style="display:none">
+                                  <img id="h" src="{{ MEDIA_URL }}coreuser/default/tx8.jpg" onclick="myFun(this.id)"></i> </p>
+                                <p><span class="tnr">留言内容:</span>
+                                    <textarea name="content" cols="60" rows="12" id="lytext"></textarea>
+                                </p>
+                                <p>
+                                    <input type="submit" name="Submit3" value="提交" />
+                                </p>
+                            </form>
+                        </div>
+                    </div>
+                    <script>
+                    function myFun(sId) {
+                        var oImg = document.getElementsByTagName('img');
+                        for (var i = 0; i < oImg.length; i++) {
+                            if (oImg[i].id == sId) {
+                                oImg[i].previousSibling.previousSibling.checked = true;
+                                oImg[i].style.opacity = '1';
+                            } else {
+                                oImg[i].style.opacity = '.8';
+                            }
+                        }
+                    }
+                    </script>
+                    <script>
+                        $('#form1').submit(function () {
+                            let form = new FormData(this);
+                            $.ajax({
+                                type: 'post',
+                                data: form,
+                                url: document.URL,
+                                processData: false,
+                                contentType: false,
+                                success: function (data) {
+                                    try {
+                                        if (data) {
+                                            insert_cotent = '';
+                                            for (var i in data) {
+                                                current_data = data[i];
+                                                console.log(current_data);
+                                                insert_cotent += '<div class="fb"> <ul> <span class="tximg"><img src="/media/' + current_data['img'] + '"></span> <p class="fbtime"><span>2019-02-15</span>' + current_data['name'] + '</p> <p class="fbinfo">' + current_data['content'] + '</p> </ul> </div>';
+                                            }
+                                            if (insert_cotent) {
+                                                $('#comment_commons').html(insert_cotent);
+                                            }
+                                        }
+                                        alert('评论成功');
+                                    } catch (e) {
+                                        alert(e);
+                                    }
+                                },
+                                error: function (data) {
+                                    data = JSON.parse(data.responseText);
+                                    error_message = '';
+                                    for (var a in data) {
+                                        error_message += data[a];
+                                    }
+                                    alert(error_message);
+                                }
+                            })
+                        });
+                    </script>
+                </div>
+            </div>
+        {% endblock %}
+        {% block rightbox %}
+            <div class="aboutme">
+                <h2 class="ab_title">关于我</h2>
+                <div class="avatar"><img src="{{ MEDIA_URL }}{{ user.photo }}" /></div>
+                    <div class="ab_con">
+                        <p>名字：{{ user.name }}</p>
+                        <p>职业：{{ user.major }} </p>
+                        <p>电话：{{ user.phone }}</p>
+                        <p>邮箱：{{ user.email }}</p>
+                    </div>
+                </div>
+            <div class="weixin">
+                <h2 class="ab_title">个人微信</h2>
+                <ul>
+                    <img src="{{ MEDIA_URL }}{{ user.wx }}">
+                </ul>
+            </div>
+        {% endblock %}

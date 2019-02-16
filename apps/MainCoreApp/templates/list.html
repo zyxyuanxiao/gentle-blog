@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block leftbox %}
+{% load i18n %}
+<div class="newblogs">
+    <h2 class="hometitle"><span>{% for item in nav %} {% if item.nav_articles_type %} <a href="{% url 'Articles:list' item.nav_articles_type.type_name|urlencode %}">{{ item.nav_articles_type.type_name }}</a> {% endif %} {% endfor %}</span>{{ title }}</h2>
+    <ul>
+        {% if is_search %}
+        {% for item in new.object_list %}
+        <li>
+            <h3 class="blogtitle"><a href="{% url 'Articles:article' item.article_search.article_type.type_name|urlencode item.article_search.title|urlencode %}" target="_blank" >
+                    {% autoescape off %}
+                    {{ item.title }}
+                    {% endautoescape %}
+                </a></h3>
+            <div class="bloginfo"><span class="blogpic"><a href="{% url 'Articles:article' item.article_search.article_type.type_name|urlencode item.article_search.title|urlencode %}{% url 'Articles:article' item.article_search.article_type.type_name|urlencode item.article_search.title|urlencode %}" title=""><img src="{{ MEDIA_URL }}{{ item.article_search.cover }}"/></a></span>
+                <a href="{% url 'Articles:article' item.article_search.article_type.type_name|urlencode item.article_search.title|urlencode %}">
+                        <p>
+                        {% if item.is_introduction %}
+                            {% autoescape off %}
+                            {{ item.introduction }}
+                            {% endautoescape %}
+                        {% else %}
+                            {% autoescape off %}
+                                {{ item.keyword }}{{ item.content|striptags|truncatechars:110|truncatewords:110 }}
+                            {% endautoescape %}
+                        {% endif %}
+                        </p>
+                    </a>
+            </div>
+            <div class="autor"><span class="lm f_l"><a href="/">{{ item.article_search.author.name }}</a></span><span class="dtime f_l">{{ item.article_search.article_brief_time }}</span><span class="viewnum f_l">浏览 ({{ item.article_search.read_num }})</span><span class="pingl f_l">喜欢 ({{ item.article_search.like_num }})</span><span class="f_r"><a href="{% url 'Articles:article' item.article_search.article_type.type_name|urlencode item.article_search.title|urlencode %}" class="more">阅读原文</a></span></div>
+        </li>
+        {% endfor %}
+        {% else %}
+        {% for item in new.object_list %}
+        <li>
+            <h3 class="blogtitle"><a href="{% url 'Articles:article' item.article_type.type_name|urlencode item.title|urlencode %}" target="_blank" >{{ item.title }}</a></h3>
+            <div class="bloginfo"><span class="blogpic"><a href="{% url 'Articles:article' item.article_type.type_name|urlencode item.title|urlencode %}{% url 'Articles:article' item.article_type.type_name|urlencode item.title|urlencode %}" title=""><img src="{{ MEDIA_URL }}{{ item.cover }}"/></a></span>
+                <a href="{% url 'Articles:article' item.article_type.type_name|urlencode item.title|urlencode %}"><p>{% if item.introduction %} {{ item.introduction }} {% else %} {% autoescape off %}{{ item.content|striptags|truncatechars:110|truncatewords:110 }}{% endautoescape %} {% endif %}</p></a>
+            </div>
+            <div class="autor"><span class="lm f_l"><a href="/">{{ item.author.name }}</a></span><span class="dtime f_l">{{ item.article_brief_time }}</span><span class="viewnum f_l">浏览 ({{ item.read_num }})</span><span class="pingl f_l">喜欢 ({{ item.like_num }})</span><span class="f_r"><a href="{% url 'Articles:article' item.article_type.type_name|urlencode item.title|urlencode %}" class="more">阅读原文</a></span></div>
+        </li>
+        {% endfor %}
+        {% endif %}
+    </ul>
+    <div class="pagelist">
+        {% if new.has_previous %}
+        <a href="?{{ new.previous_page_number.querystring }}">&nbsp;&nbsp;{% trans "上一页" %}</a>&nbsp;&nbsp;
+        {% endif %}
+        {% for page in new.pages %}
+        {% if page %}
+        {% ifequal page new.number %}
+        <a href="?{{ page.querystring }}" class="page"><b>{{ page }}</b></a>
+        {% else %}
+        <a href="?{{ page.querystring }}" class="page">{{ page }}</a>
+        {% endifequal %}
+        {% else %}
+        ...
+        {% endif %}
+        {% endfor %}
+        {% if new.has_next %}
+        <a href="?{{ new.next_page_number.querystring }}" class="next">{% trans "下一页" %}</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+{% block rightbox %}
+<div class="blank"></div>
+<div class="search">
+    <form action="" method="get" name="searchform" id="searchform" onsubmit="return false;">
+        <input name="keyboard" id="keyboard" class="input_text" value="请输入关键字" style="color: rgb(153, 153, 153);" onfocus="if(value=='请输入关键字'){this.style.color='#000';value=''}" onblur="if(value==''){this.style.color='#999';value='请输入关键字'}" type="text">
+        <input name="show" value="title" type="hidden">
+        <input name="tempid" value="1" type="hidden">
+        <input name="tbname" value="news" type="hidden">
+        <input name="Submit" class="input_submit" value="搜索" type="submit" onclick="Search()">
+    </form>
+</div>
+<div class="paihang">
+    <h2 class="ab_title"><a href="/">本栏推荐</a></h2>
+    <ul>
+        {% if recommend %}
+        {% for item in recommend %}
+        {% if item.is_recommend %}
+        <li><b><a href="{% url 'Articles:article' item.article_type.type_name|urlencode item.title|urlencode %}" target="_blank">{{ item.title }}</a></b>
+            <p>{% if item.introduction %} {{ item.introduction|truncatewords:45|truncatechars:45 }} {% else %} {% autoescape off %} {{ item.content|striptags|truncatewords:45|truncatechars:45 }} {% endautoescape %} {% endif %}</p>
+        </li>
+        {% endif %}
+        {% endfor %}
+        {% else %}
+        <h3 style="text-align: center">无</h3>
+        {% endif %}
+    </ul>
+</div>
+<div class="paihang">
+    <h2 class="ab_title"><a href="/">点击排行</a></h2>
+    <ul>
+        {% for item in read %}
+        <li><b><a href="{% url 'Articles:article' item.article_type.type_name|urlencode item.title|urlencode %}" target="_blank">{{ item.title }}</a></b>
+            <p><i><img src="{{ MEDIA_URL }}{{ item.cover }}"></i> <a href="{% url 'Articles:article' item.article_type.type_name|urlencode item.title|urlencode %}{% url 'Articles:article' item.article_type.type_name|urlencode item.title|urlencode %}">{% if item.introduction %} {{ item.introduction|truncatewords:45|truncatechars:45 }} {% else %} {% autoescape off %} {{ item.content|striptags|truncatewords:45|truncatechars:45 }} {% endautoescape %} {% endif %}</a></p>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+<div class="weixin">
+    <h2 class="ab_title">微信关注</h2>
+    <ul>
+        <img src="{{ MEDIA_URL }}{{ user.wx }}">
+      </ul>
+</div>
+<script>
+function Search() {
+    window.location.href = encodeURI("/list/" + document.getElementById('keyboard').value + "/");
+}
+</script>
+{% endblock %}

@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+{% block extra_head %}
+<div class="pics">
+    <ul>
+        {% for item in banner %}
+        <li><i><a href="{% url 'Articles:article' item.article_type.type_name|urlencode item.title|urlencode %}"><img src="{{ MEDIA_URL }}{{ item.cover }}"></a></i><span>{{ item.title }}</span></li>
+        {% endfor %}
+    </ul>
+</div>
+<div class="blank"></div>
+{% endblock %}
+{% block leftbox %}
+<div class="tuijian">
+    <h2 class="hometitle"><span>{% for item in nav %} {% if item.nav_articles_type %} <a href="{% url 'Articles:list' item.nav_articles_type.type_name|urlencode %}">{{ item.nav_articles_type.type_name }}</a> {% endif %} {% endfor %} <a href="/">热门标签</a></span>特别推荐</h2>
+    <ul>
+        {% for item in recommend %}
+        <li>
+            <div class="tpic"><a href="{% url 'Articles:article' item.article_type.type_name|urlencode item.title|urlencode %}"><img src="{{ MEDIA_URL }}{{ item.cover }}"></a></div>
+            <a href="{% url 'Articles:article' item.article_type.type_name|urlencode item.title|urlencode %}"><b>{{ item.title }}</b></a><span><a href="{% url 'Articles:article' item.article_type.type_name|urlencode item.title|urlencode %}">{% if item.introduction %} {{ item.introduction }} {% else %} {% autoescape off %}{{ item.content|striptags }}{% endautoescape %} {% endif %}</a></span><a href="{% url 'Articles:article' item.article_type.type_name|urlencode item.title|urlencode %}" class="readmore">阅读原文</a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+<div class="newblogs">
+    <h2 class="hometitle">最新文章</h2>
+    <ul id="list">
+        {% for item in new.object_list %}
+        <li>
+            <h3 class="blogtitle"><a href="{% url 'Articles:article' item.article_type.type_name|urlencode item.title|urlencode %}" target="_blank" >{{ item.title }}</a></h3>
+            <div class="bloginfo"><span class="blogpic"><a href="{% url 'Articles:article' item.article_type.type_name|urlencode item.title|urlencode %}{% url 'Articles:article' item.article_type.type_name|urlencode item.title|urlencode %}" title=""><img src="{{ MEDIA_URL }}{{ item.cover }}"/></a></span>
+                <a href="{% url 'Articles:article' item.article_type.type_name|urlencode item.title|urlencode %}"><p>{% if item.introduction %} {{ item.introduction }} {% else %} {% autoescape off %}{{ item.content|striptags|truncatechars:110|truncatewords:110s }}{% endautoescape %} {% endif %}</p></a>
+            </div>
+            <div class="autor"><span class="lm f_l"><a href="/">{{ item.author.name }}</a></span><span class="dtime f_l">{{ item.article_brief_time }}</span><span class="viewnum f_l">浏览 ({{ item.read_num }})</span><span class="pingl f_l">喜欢 ({{ item.like_num }})</span><span class="f_r"><a href="{% url 'Articles:article' item.article_type.type_name|urlencode item.title|urlencode %}" class="more">阅读原文</a></span></div>
+        </li>
+        {% endfor %}
+        <div class="pagelist">
+            {% if new.has_previous %}
+            <a href="?{{ new.previous_page_number.querystring }}">&nbsp;&nbsp;{% trans "上一页" %}</a>&nbsp;&nbsp;
+            {% endif %}
+            {% for page in new.pages %}
+            {% if page %}
+            {% ifequal page new.number %}
+            <a href="?{{ page.querystring }}" class="page"><b>{{ page }}</b></a>
+            {% else %}
+            <a href="?{{ page.querystring }}" class="page">{{ page }}</a>
+            {% endifequal %}
+            {% else %}
+            ...
+            {% endif %}
+            {% endfor %}
+            {% if new.has_next %}
+            <a href="?{{ new.next_page_number.querystring }}" class="next">{% trans "下一页" %}</a>
+            {% endif %}
+        </div>
+    </ul>
+    <ul id="list2">
+    </ul>
+    <script src="{% static 'js/page2.js' %}"></script>
+</div>
+{% endblock %}
+{% block rightbox %}
+<div class="aboutme">
+    <h2 class="ab_title">关于我</h2>
+    <div class="avatar"><img src="{{ MEDIA_URL }}{{ user.photo }}" /></div>
+        <div class="ab_con">
+            <p>名字：{{ user.name }}</p>
+            <p>职业：{{ user.major }} </p>
+            <p>电话：{{ user.phone }}</p>
+            <p>邮箱：{{ user.email }}</p>
+        </div>
+    </div>
+    <div class="blank"></div>
+    <div class="search">
+        <form action="" method="post" name="searchform" id="searchform" onsubmit="return false;">
+            <input name="keyboard" id="keyboard" class="input_text" value="请输入关键字" style="color: rgb(153, 153, 153);" onfocus="if(value=='请输入关键字'){this.style.color='#000';value=''}" onblur="if(value==''){this.style.color='#999';value='请输入关键字'}" type="text">
+            <input name="show" value="title" type="hidden">
+            <input name="tempid" value="1" type="hidden">
+            <input name="tbname" value="news" type="hidden">
+            <input name="Submit" class="input_submit" value="搜索" type="submit" onclick="Search()">
+        </form>
+    </div>
+    <div class="paihang">
+        <h2 class="ab_title"><a href="/">点击排行</a></h2>
+        <ul>
+            {% for item in read %}
+            <li><b><a href="{% url 'Articles:article' item.article_type.type_name|urlencode item.title|urlencode %}" target="_blank">{{ item.title }}</a></b>
+                <p><i><img src="{{ MEDIA_URL }}{{ item.cover }}"></i> <a href="{% url 'Articles:article' item.article_type.type_name|urlencode item.title|urlencode %}{% url 'Articles:article' item.article_type.type_name|urlencode item.title|urlencode %}">{% if item.introduction %} {{ item.introduction|truncatewords:45|truncatechars:45 }} {% else %} {% autoescape off %} {{ item.content|striptags|truncatewords:45|truncatechars:45 }} {% endautoescape %} {% endif %}</a></p>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="links">
+        <h2 class="ab_title">友情链接</h2>
+        <ul>
+            {% for item in link %}
+            <li><a href="{{ item.link_url }}">{{ item.link_name }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="weixin">
+        <h2 class="ab_title">微信关注</h2>
+        <ul>
+            <img src="{{ MEDIA_URL }}{{ user.wx }}">
+        </ul>
+    </div>
+    <script>
+    function Search() {
+        window.location.href = encodeURI("/list/" + document.getElementById('keyboard').value + "/");
+    }
+    </script>
+    {% endblock %}
