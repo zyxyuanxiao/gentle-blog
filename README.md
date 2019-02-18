@@ -48,19 +48,19 @@
 
   直接访问 https://github.com/sshwsfc/xadmin 下载
 
-  ![1550461969086](.\READMEIMAGES\1550461969086.png)
+  ![1550461969086](https://github.com/derknight/gentle-blog/blob/master/READMEIMAGES/1550461969086.png)
 
-  ![1550461997891](.\READMEIMAGES\1550461997891.png)
+  ![1550461997891](https://github.com/derknight/gentle-blog/blob/master/READMEIMAGES/1550461997891.png)
 
 - ###### pip 安装 xadmin
 
   ​	  1. __确保文件在文件加下后，在地址栏上输入 cmd 打开 cmd__
 
-  ![1550461582701](.\READMEIMAGES\1550461582701.png)
+  ![1550461582701](https://github.com/derknight/gentle-blog/blob/master/READMEIMAGES/1550461582701.png)
 
   ​	  2. __命令行 pip 安装__
 
-  ![1550461764735](.\READMEIMAGES\1550461764735.png)
+  ![1550461764735](https://github.com/derknight/gentle-blog/blob/master/READMEIMAGES/1550461764735.png)
 
   代码 `pip install xadmin-django2.zip`
 
@@ -116,7 +116,7 @@ __如果中间有疑问的话请发送邮箱到 794130574@qq.com__
 
 将 404 和 500 的页面替换 MainCoreApp 中 templates 文件夹中的 404 和 500 的 html
 
-![1550463277665](.\READMEIMAGES\1550463277665.png)
+![1550463277665](https://github.com/derknight/gentle-blog/blob/master/READMEIMAGES/1550463277665.png)
 
 
 
@@ -142,7 +142,7 @@ refresh_times # 设置提供几秒刷新页面 （值：<list:秒数>）
 
 比如是想修改 StromInfo 这个表单就在 xadmin.py 中找到 StromInfoAdmin 类
 
-![1550463664784](.\READMEIMAGES\1550463664784.png)
+![1550463664784](https://github.com/derknight/gentle-blog/blob/master/READMEIMAGES/1550463664784.png)
 
 __改写其中的字段以及对应的值即可__
 
