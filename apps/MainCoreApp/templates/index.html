@@ -28,7 +28,7 @@
     <ul id="list">
         {% for item in new.object_list %}
         <li>
-            <h3 class="blogtitle"><a href="{% url 'Articles:article' item.article_type.type_name|urlencode item.title|urlencode %}" target="_blank" >{{ item.title }}</a></h3>
+            <h3 class="blogtitle"><a href="{% url 'Articles:article' item.article_type.type_name|urlencode item.title|urlencode %}" target="_blank" >{{ item.title }}</a> {% if item.is_top %} <div style="background-color: #f20606;color: #fff;padding: 0 5px;font-size: 14px;display: inline-block;margin-left: 10px;height: 25px;line-height: 25px;">置顶</div> {% endif %}</h3>
             <div class="bloginfo"><span class="blogpic"><a href="{% url 'Articles:article' item.article_type.type_name|urlencode item.title|urlencode %}{% url 'Articles:article' item.article_type.type_name|urlencode item.title|urlencode %}" title=""><img src="{{ MEDIA_URL }}{{ item.cover }}"/></a></span>
                 <a href="{% url 'Articles:article' item.article_type.type_name|urlencode item.title|urlencode %}"><p>{% if item.introduction %} {{ item.introduction }} {% else %} {% autoescape off %}{{ item.content|striptags|truncatechars:110|truncatewords:110s }}{% endautoescape %} {% endif %}</p></a>
             </div>

@@ -4,6 +4,19 @@ date: '19-2-13 下午6:22'
 '''
 from . import models
 import xadmin
+from xadmin import views
+
+
+class BaseSetting(object):
+    enable_themes = True
+    use_bootswatch = True
+    menu_style = 'accordion'
+
+
+class GlobalSettings(object):
+    site_title = "后台博客管理系统"
+    site_footer = "后台博客管理系统"
+    menu_style = "accordion"
 
 
 class StromInfoAdmin(object):
@@ -80,3 +93,5 @@ xadmin.site.register(models.ArticleTag, ArticleTagAdmin)
 xadmin.site.register(models.ArticlesMake, ArticlesMakeAdmin)
 xadmin.site.register(models.FriendshipLink, FriendshipLinkAdmin)
 xadmin.site.register(models.ArticleComment, ArticleCommentAdmin)
+xadmin.site.register(views.BaseAdminView, BaseSetting)
+xadmin.site.register(views.CommAdminView, GlobalSettings)

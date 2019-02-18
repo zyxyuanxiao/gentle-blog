@@ -17,6 +17,7 @@ Including another URLconf
 from django.urls import path, re_path, include
 from django.views.static import serve
 from blog.settings import STATIC_ROOT, MEDIA_ROOT
+from django.conf.urls import *
 import xadmin
 
 urlpatterns = [
@@ -32,3 +33,6 @@ urlpatterns = [
     path('', include(('apps.MainCoreApp.urls', 'Articles'), namespace='Articles')),
     path('Leaving/Message/', include('apps.CommonComment.urls')),
 ]
+
+handler400 = 'apps.MainCoreApp.views.page404'
+handler500 = 'apps.MainCoreApp.views.page500'

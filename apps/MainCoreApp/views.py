@@ -12,7 +12,7 @@ class IndexView(View):
         try:
             base = models.BlogBaseSet.objects.all()[0]
             user = models.StromInfo.objects.all()[0]
-            article = models.ArticlesMake.objects.order_by('-article_make_time')
+            article = models.ArticlesMake.objects.order_by('-is_top', '-article_make_time')
             banner = models.ArticlesMake.objects.filter(is_banner=True).order_by('-like_num', '-read_num')[:3]
             recommend = models.ArticlesMake.objects.filter(is_recommend=True).order_by('-like_num', '-read_num')[:6]
             read = models.ArticlesMake.objects.order_by('-read_num')[:6]
@@ -77,11 +77,11 @@ class ArticleView(View):
             title = typeof = unquote(typeof)
             is_search = False
             try:
-                article_list = models.ArticleType.objects.filter(type_name=typeof)[0].MainCoreApp_ArticlesMake_related.all().order_by('-article_make_time')
+                article_list = models.ArticleType.objects.filter(type_name=typeof)[0].MainCoreApp_ArticlesMake_related.all().order_by('-is_top', '-article_make_time')
                 title = '文章类型： ' + title
             except:
                 try:
-                    article_list = models.ArticleTag.objects.filter(tag_name=typeof)[0].MainCoreApp_ArticlesMake_related.all().order_by('-article_make_time')
+                    article_list = models.ArticleTag.objects.filter(tag_name=typeof)[0].MainCoreApp_ArticlesMake_related.all().order_by('-is_top', '-article_make_time')
                     title = '文章标签： ' + title
                 except:
                     title = '搜索： ' + title
@@ -169,3 +169,11 @@ def ThumbUp(request):
                                             content_type='application/json', status=200)
                     response.set_cookie('0'+str(article.id), str(article.id), max_age=60*60*24)
                 return response
+
+
+def page404(request):
+    return render(request, '404.html', status=404)
+
+
+def page500(request):
+    return render(request, '500.html', status=500)
